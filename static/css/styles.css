@@ -8074,6 +8074,7 @@ textarea.form-control-lg {
 
 .fs-4 {
   font-size: calc(1.275rem + 0.3vw) !important;
+  line-height: 1;
 }
 
 .fs-5 {
