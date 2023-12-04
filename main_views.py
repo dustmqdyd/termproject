@@ -27,7 +27,7 @@ def close_database_connection(connection):
 
 def execute_query(query):
     global connection
-    cursor = connection.cursor()
+    cursor = connection.cursor(dictionary=True)
     cursor.execute(query)
     data_list = cursor.fetchall()
     cursor.close()
@@ -169,16 +169,6 @@ def connect_db():
         
     except mysql.connector.Error as err:
         return f"Error: {err}"
-    
-
-@bp.route('/table/<table_name>')
-def table(table_name):
-    try:
-        query = f'SELECT * FROM {table_name};'
-        result = execute_query(query)
-        return render_template('table.html', table_name=table_name, data=result)
-    except Exception as err:
-        return f"Error: {err}"
 
 
 @bp.route('/insert-sim', methods=['POST'])
@@ -254,3 +244,13 @@ def insert_payment():
             return render_template('insert_user.html')
         else:
             flash({'error': 'Error inserting user. Please try again.'})
+
+
+@bp.route('/table/<table_name>')
+def table(table_name):
+    try:
+        query = f'SELECT * FROM {table_name};'
+        result = execute_query(query)
+        return render_template('table.html', table_name=table_name, data=result)
+    except Exception as err:
+        return f"Error: {err}"
