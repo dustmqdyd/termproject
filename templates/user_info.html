@@ -1,55 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Insert Plan</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="static/css/styles.css" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container px-lg-5">
-                <a class="navbar-brand" href="/">CowKing Telecom DB Service</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-                    </ul>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>CowKing Telecom Service</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+    <!-- Core theme CSS (without Bootstrap)-->
+    <link href="static/css/styles.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+        nav {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .navbar-nav {
+            font-size: 1.2rem;
+        }
+        header {
+            padding: 5rem 0;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+        .table {
+            width: 100%;
+            margin-bottom: 2rem;
+            color: #333;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            text-align: center; /* Center-align content */
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #343a40;
+            color: #fff;
+        }
+    </style>    
+</head>
+<body>
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-lg-5">
+            <a class="navbar-brand" href="/">CowKing Telecom DB Service</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        </div>
+    </nav>
+    <!-- Header-->
+    <header class="py-5">
+        <div class="container px-lg-5">
+            <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+                <div class="m-4 m-lg-5">
+                    <h2 class="display-5 fw-bold">{{ table_name }}</h2>
+                    {% if data %}
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    {% for key, value in data[0].items() %}
+                                        <th>{{ key }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in data %}
+                                    <tr>
+                                        {% for key, value in row.items() %}
+                                            <td>{{ value }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No data available</p>
+                    {% endif %}
                 </div>
             </div>
-        </nav>
-        <!-- Header-->
-        <header class="py-5">
-            <div class="container px-lg-5">
-                <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
-                    <div class="m-4 m-lg-5">
-                        <h2 class="fs-4 fw-bold">Insert Plan complete!</h1>
-                        <p class="fs-4 align-self-center">Values inserted<br><br>
-                            Plan ID: {{ user_info.plan_id }}<br>
-                            Plan Name: {{ user_info.plan_name }}<br>
-                            SID: {{ user_info.mgr_sid }}<br>
-                            <!-- Add more fields as needed -->
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; CowKing Telecom 2023</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-    </body>
+        </div>
+    </header>
+</body>
 </html>

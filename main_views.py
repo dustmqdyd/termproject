@@ -150,40 +150,6 @@ def insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
         close_database_connection(connection)
 
 
-def find_user_query(name):
-    try:
-        connection = get_database_connection()
-        cursor = connection.cursor(dictionary=True)
-
-        query = """
-            SELECT user.*, 
-                   sim.sid AS sim_sid, sim.type AS sim_type, sim.status AS sim_status, 
-                   plan.plan_name,
-                   payment.payment_method, payment.amount,
-                   price.price_value
-            FROM USER
-            LEFT JOIN SIM ON user.sim_sid = sim.sid
-            LEFT JOIN PLAN ON user.plan_id = plan.id
-            LEFT JOIN PAYMENT ON user.id = payment.user_id
-            LEFT JOIN PRICE ON plan.price_id = price.id
-            WHERE user.name = {name}
-        """
-
-        cursor.execute(query)
-        result = cursor.fetchone()
-
-        return result
-
-    except mysql.connector.Error as err:
-        print(f"Error finding user: {err}")
-        return None
-
-    finally:
-        if cursor:
-            cursor.close()
-        close_database_connection(connection)
-
-
 def delete_user_query(delete_uid):
     try:
         connection = get_database_connection()
@@ -308,16 +274,6 @@ def insert_payment():
         if insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
             return render_template('insert_payment.html', card_id=card_id, cvc=cvc, company=company, payment_date=payment_date, mgr_uid=mgr_uid)
         
-
-@bp.route('/find-user', methods=['POST'])
-def find_user():
-    if request.method == 'POST':
-        name_to_find = request.form.get('name_to_find')
-        user_info = find_user_query(name_to_find)
-
-        if user_info:
-            return render_template('user_info.html', user_info=user_info)
-
 
 @bp.route('/delete-User', methods=['POST'])
 def delete_user():
