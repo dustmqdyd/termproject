@@ -44,12 +44,12 @@ def insert_sim_query(sid, s_type, status, phone):
 
         cursor.execute(query, data)
         connection.commit()
-        print('hi')
-        return True  # Insertion successful
+        
+        return True
 
     except mysql.connector.Error as err:
         print(f"Error inserting user: {err}")
-        return False  # Insertion failed
+        return False
 
     finally:
         if cursor:
@@ -108,7 +108,7 @@ def insert_plan_query(plan_id, pname, mgr_sid):
         connection = get_database_connection()
         cursor = connection.cursor()
 
-        query = "INSERT INTO PRICE (plan_id, pname, mgr_sid) VALUES (%s, %s, %s)"
+        query = "INSERT INTO PLAN (plan_id, pname, mgr_sid) VALUES (%s, %s, %s)"
         data = (plan_id, pname, mgr_sid)
 
         cursor.execute(query, data)
@@ -132,7 +132,7 @@ def insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
         connection = get_database_connection()
         cursor = connection.cursor()
 
-        query = "INSERT INTO PRICE (card_id, cvc, company, payment_date, mgr_uid) VALUES (%s, %s, %s, %s, %s)"
+        query = "INSERT INTO PAYMENT (card_id, cvc, company, payment_date, mgr_uid) VALUES (%s, %s, %s, %s, %s)"
         data = (card_id, cvc, company, payment_date, mgr_uid)
 
         cursor.execute(query, data)
@@ -143,6 +143,40 @@ def insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
     except mysql.connector.Error as err:
         print(f"Error inserting user: {err}")
         return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        close_database_connection(connection)
+
+
+def find_user_query(name):
+    try:
+        connection = get_database_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        query = """
+            SELECT user.*, 
+                   sim.sid AS sim_sid, sim.type AS sim_type, sim.status AS sim_status, 
+                   plan.plan_name,
+                   payment.payment_method, payment.amount,
+                   price.price_value
+            FROM USER
+            LEFT JOIN SIM ON user.sim_sid = sim.sid
+            LEFT JOIN PLAN ON user.plan_id = plan.id
+            LEFT JOIN PAYMENT ON user.id = payment.user_id
+            LEFT JOIN PRICE ON plan.price_id = price.id
+            WHERE user.name = {name}
+        """
+
+        cursor.execute(query)
+        result = cursor.fetchone()
+
+        return result
+
+    except mysql.connector.Error as err:
+        print(f"Error finding user: {err}")
+        return None
 
     finally:
         if cursor:
@@ -224,7 +258,7 @@ def insert_sim():
         phone = request.form.get('phone')
 
         if insert_sim_query(sid, s_type, status, phone):
-            return render_template('insert_sim.html')
+            return render_template('insert_sim.html', sid=sid, s_type=s_type, status=status, phone=phone)
 
 
 @bp.route('/insert-user', methods=['POST'])
@@ -236,7 +270,7 @@ def insert_user():
         sim_sid = request.form.get('sim_sid')
 
         if insert_user_query(uid, name, birth_date, sim_sid):
-            return render_template('insert_user.html')
+            return render_template('insert_user.html', uid=uid, user_name=name, birth_date=birth_date, sim_sid=sim_sid)
 
 
 @bp.route('/insert-price', methods=['POST'])
@@ -248,7 +282,7 @@ def insert_price():
         call_limit = request.form.get('call_limit')
 
         if insert_price_query(plan_name, bill, data_limit, call_limit):
-            return render_template('insert_price.html')
+            return render_template('insert_price.html', plan_name=plan_name, bill=bill, data_limit=data_limit, call_limit=call_limit)
 
 
 @bp.route('/insert-plan', methods=['POST'])
@@ -259,7 +293,7 @@ def insert_plan():
         mgr_sid = request.form.get('mgr_sid')
 
         if insert_plan_query(plan_id, pname, mgr_sid):
-            return render_template('insert_plan.html')
+            return render_template('insert_plan.html', plan_id=plan_id, pname=pname, mgr_sid=mgr_sid)
 
 
 @bp.route('/insert-payment', methods=['POST'])
@@ -272,7 +306,17 @@ def insert_payment():
         mgr_uid = request.form.get('mgr_uid')
 
         if insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
-            return render_template('insert_payment.html')
+            return render_template('insert_payment.html', card_id=card_id, cvc=cvc, company=company, payment_date=payment_date, mgr_uid=mgr_uid)
+        
+
+@bp.route('/find-user', methods=['POST'])
+def find_user():
+    if request.method == 'POST':
+        name_to_find = request.form.get('name_to_find')
+        user_info = find_user_query(name_to_find)
+
+        if user_info:
+            return render_template('user_info.html', user_info=user_info)
 
 
 @bp.route('/delete-User', methods=['POST'])

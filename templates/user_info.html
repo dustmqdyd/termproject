@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Insert Plan Price</title>
+        <title>Insert Plan</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
         <!-- Bootstrap icons-->
@@ -32,12 +32,13 @@
             <div class="container px-lg-5">
                 <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
                     <div class="m-4 m-lg-5">
-                        <h2 class="fs-4 fw-bold">Insert Price complete!</h1>
-                        <p class="fs-4 algin-self-center">Values inserted<br><br>
-                            Plan Name: {{ plan_name }}<br>
-                            Bill: {{ bill }}<br>
-                            Data Limit: {{ data_limit }}<br>
-                            Call Limit: {{ call_limit }}<br>
+                        <h2 class="fs-4 fw-bold">Insert Plan complete!</h1>
+                        <p class="fs-4 align-self-center">Values inserted<br><br>
+                            Plan ID: {{ user_info.plan_id }}<br>
+                            Plan Name: {{ user_info.plan_name }}<br>
+                            SID: {{ user_info.mgr_sid }}<br>
+                            <!-- Add more fields as needed -->
+                        </p>
                     </div>
                 </div>
             </div>
