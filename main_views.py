@@ -150,6 +150,50 @@ def insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
         close_database_connection(connection)
 
 
+def delete_user_query(delete_uid):
+    try:
+        connection = get_database_connection()
+        cursor = connection.cursor()
+
+        query = f"DELETE FROM USER WHERE uid = {delete_uid}"
+
+        cursor.execute(query)
+        connection.commit()
+
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"Error deleting user: {err}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        close_database_connection(connection)
+
+
+def delete_SIM_query(delete_sid):
+    try:
+        connection = get_database_connection()
+        cursor = connection.cursor()
+
+        query = f"DELETE FROM SIM WHERE sid = {delete_sid}"
+
+        cursor.execute(query)
+        connection.commit()
+
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"Error deleting user: {err}")
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        close_database_connection(connection)
+
+
 @bp.route('/')
 def index():
     return render_template('index.html')
@@ -174,37 +218,30 @@ def connect_db():
 @bp.route('/insert-sim', methods=['POST'])
 def insert_sim():
     if request.method == 'POST':
-        # Extract form data
         sid = request.form.get('sid')
         s_type = request.form.get('s_type')
         status = request.form.get('status')
         phone = request.form.get('phone')
 
         if insert_sim_query(sid, s_type, status, phone):
-            return render_template('insert_sim.html', sid=sid, s_type=s_type, status=status, phone=phone)
-        else:
-            flash({'error': 'Error inserting user. Please try again.'})
+            return render_template('insert_sim.html')
 
 
 @bp.route('/insert-user', methods=['POST'])
 def insert_user():
     if request.method == 'POST':
-        # Extract form data
         uid = request.form.get('uid')
         name = request.form.get('user_name')
         birth_date = request.form.get('birth_date')
         sim_sid = request.form.get('sim_sid')
 
         if insert_user_query(uid, name, birth_date, sim_sid):
-            return render_template('insert_user.html', uid=uid)
-        else:
-            flash({'error': 'Error inserting user. Please try again.'})
+            return render_template('insert_user.html')
 
 
 @bp.route('/insert-price', methods=['POST'])
 def insert_price():
     if request.method == 'POST':
-        # Extract form data
         plan_name = request.form.get('plan-name')
         bill = request.form.get('bill')
         data_limit = request.form.get('data_limit')
@@ -212,28 +249,22 @@ def insert_price():
 
         if insert_price_query(plan_name, bill, data_limit, call_limit):
             return render_template('insert_price.html')
-        else:
-            flash({'error': 'Error inserting user. Please try again.'})
 
 
 @bp.route('/insert-plan', methods=['POST'])
 def insert_plan():
     if request.method == 'POST':
-        # Extract form data
         plan_id = request.form.get('plan-id')
         pname = request.form.get('pname')
         mgr_sid = request.form.get('mgr_sid')
 
         if insert_plan_query(plan_id, pname, mgr_sid):
-            return render_template('insert_user.html')
-        else:
-            flash({'error': 'Error inserting user. Please try again.'})
+            return render_template('insert_plan.html')
 
 
 @bp.route('/insert-payment', methods=['POST'])
 def insert_payment():
     if request.method == 'POST':
-        # Extract form data
         card_id = request.form.get('card_id')
         cvc = request.form.get('cvc')
         company = request.form.get('company')
@@ -241,10 +272,23 @@ def insert_payment():
         mgr_uid = request.form.get('mgr_uid')
 
         if insert_payment_query(card_id, cvc, company, payment_date, mgr_uid):
-            return render_template('insert_user.html')
-        else:
-            flash({'error': 'Error inserting user. Please try again.'})
+            return render_template('insert_payment.html')
 
+
+@bp.route('/delete-User', methods=['POST'])
+def delete_user():
+    delete_uid = request.form.get('delete_uid')
+    if request.method == 'POST':
+        if delete_user_query(delete_uid):
+            return render_template('delete_user.html', uid=delete_uid)
+    
+
+@bp.route('/delete-SIM', methods=['POST'])
+def delete_SIM():
+    delete_sid = request.form.get('delete_sid')
+    if request.method == 'POST':
+        if delete_SIM_query(delete_sid):
+            return render_template('delete_sim.html', delete_sid=delete_sid)   
 
 @bp.route('/table/<table_name>')
 def table(table_name):
